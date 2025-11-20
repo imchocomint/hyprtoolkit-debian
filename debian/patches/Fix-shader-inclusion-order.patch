@@ -9,19 +9,20 @@ Origin: Debian
 Forwarded: no
 Author: Chow Loong Jin <hyperair@debian.org>
 ---
- scripts/generateShaderIncludes.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/generateShaderIncludes.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/scripts/generateShaderIncludes.sh b/scripts/generateShaderIncludes.sh
-index 58594c9..9037c11 100755
+index 58594c9..770cd06 100755
 --- a/scripts/generateShaderIncludes.sh
 +++ b/scripts/generateShaderIncludes.sh
-@@ -12,7 +12,7 @@ echo '#pragma once' > ./src/renderer/gl/shaders/Shaders.hpp
+@@ -12,7 +12,8 @@ echo '#pragma once' > ./src/renderer/gl/shaders/Shaders.hpp
  echo '#include <map>' >> ./src/renderer/gl/shaders/Shaders.hpp
  echo 'static const std::map<std::string, std::string> SHADERS = {' >> ./src/renderer/gl/shaders/Shaders.hpp
  
 -for filename in `ls ${SHADERS_SRC}`; do
-+for filename in `ls ${SHADERS_SRC} | sort`; do
++find "$SHADERS_SRC" -maxdepth 1 -type f | sort -fdi | while read -r filepath; do
++	filename=${filepath#"${SHADERS_SRC}"/}
  	echo "--	${filename}"
  	
  	{ echo 'R"#('; cat ${SHADERS_SRC}/${filename}; echo ')#"'; } > ./src/renderer/gl/shaders/${filename}.inc

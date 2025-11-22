@@ -41,9 +41,17 @@ Depends:
  libhyprgraphics-dev (>= 0.3.0),
  libaquamarine-dev (>= 0.9.5),
  ${misc:Depends},
-Description: Development files for libhyprtoolkit
- This package provides the headers and pkg-config file for developing
- applications using Hyprtoolkit.
+Description: Modern, wayland-native C++ GUI toolkit -- development files
+ Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
+ making wayland GUI apps, with a few goals:
+ .
+  - Simple C++ API for making a GUI app
+  - Smooth animations
+  - Easy usage
+  - Simple system theming
+ .
+ This package contains the headers and other development support files needed
+ for compiling and linking applications and libraries which use this library.
 
 Package: libhyprtoolkit3
 Architecture: any
@@ -51,6 +59,14 @@ Multi-Arch: same
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
-Description: Wayland-native C++ GUI toolkit
- Hyprtoolkit provides a lightweight C++ library for building Wayland-native
- graphical interfaces and controls.
+Description: Modern, wayland-native C++ GUI toolkit -- binary files
+ Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
+ making wayland GUI apps, with a few goals:
+ .
+  - Simple C++ API for making a GUI app
+  - Smooth animations
+  - Easy usage
+  - Simple system theming
+ .
+ This package contains the shared library needed for running applications which
+ use this library.

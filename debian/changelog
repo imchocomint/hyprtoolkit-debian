@@ -1,4 +1,4 @@
-hyprtoolkit (0.3.0-1) UNRELEASED; urgency=medium
+hyprtoolkit (0.3.0-1) unstable; urgency=medium
 
   * Initial release. (Closes: #1118668)
 

@@ -7,6 +7,8 @@
 #include "../window/ToolkitWindow.hpp"
 #include "../layout/Positioner.hpp"
 
+#include <algorithm>
+
 using namespace Hyprtoolkit;
 using namespace Hyprutils::Math;
 
@@ -219,6 +221,10 @@ bool IElement::positioningDependsOnChild() {
 
 CBox IElement::opaqueBox() {
     return {};
+}
+
+void IElement::forceReposition() {
+    g_positioner->repositionNeeded(impl->self.lock(), true);
 }
 
 void SElementInternalData::setPosition(const CBox& box) {

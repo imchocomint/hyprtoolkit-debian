@@ -1,0 +1,41 @@
+From: Carl Keinath <carl.keinath@gmail.com>
+Date: Mon, 1 Dec 2025 08:32:51 +0100
+Subject: Fix opengl linking
+
+Forwarded: not-needed
+Origin: Debian
+---
+ CMakeLists.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 94576df..0016225 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -19,7 +19,7 @@ set(INCLUDE ${CMAKE_INSTALL_FULL_INCLUDEDIR})
+ set(LIBDIR ${CMAKE_INSTALL_FULL_LIBDIR})
+ 
+ find_package(PkgConfig REQUIRED)
+-find_package(OpenGL REQUIRED COMPONENTS "GLES3")
++find_package(OpenGL REQUIRED COMPONENTS EGL GLES3)
+ find_package(hyprwayland-scanner 0.4.0 REQUIRED)
+ pkg_check_modules(
+   deps
+@@ -73,7 +73,7 @@ target_include_directories(
+   PRIVATE "./src" "./src/include" "./protocols" "${CMAKE_BINARY_DIR}")
+ set_target_properties(hyprtoolkit PROPERTIES VERSION ${HYPRTOOLKIT_VERSION}
+                                              SOVERSION 4)
+-target_link_libraries(hyprtoolkit PUBLIC OpenGL::EGL OpenGL::OpenGL
++                                           target_link_libraries(hyprtoolkit PUBLIC OpenGL::EGL OpenGL::GLES3
+                                          PkgConfig::deps)
+ 
+ check_include_file("sys/timerfd.h" HAS_TIMERFD)
+@@ -172,7 +172,7 @@ if(BUILD_TESTING)
+     PRIVATE "./src" "./src/include" "./protocols" "${CMAKE_BINARY_DIR}")
+   target_link_libraries(
+     hyprtoolkit_tests PRIVATE hyprtoolkit GTest::gtest_main OpenGL::EGL
+-                                     OpenGL::OpenGL PkgConfig::deps)
++    OpenGL::GLES3 PkgConfig::deps)
+ 
+   gtest_discover_tests(hyprtoolkit_tests)
+ 

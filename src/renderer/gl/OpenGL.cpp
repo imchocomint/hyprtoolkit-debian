@@ -447,7 +447,7 @@ COpenGLRenderer::COpenGLRenderer(int drmFD) : m_drmFD(drmFD) {
 
     g_logger->log(HT_LOG_DEBUG, "DRM syncobj timeline support: {}", m_syncobjSupported ? "yes" : "no");
 #else
-    Debug::log(LOG, "DRM syncobj timeline support: no (not linux)");
+    g_logger->log(HT_LOG_DEBUG, "DRM syncobj timeline support: no (not linux)");
 #endif
 
 #ifdef HYPRTOOLKIT_DEBUG
@@ -522,6 +522,8 @@ COpenGLRenderer::COpenGLRenderer(int drmFD) : m_drmFD(drmFD) {
 }
 
 COpenGLRenderer::~COpenGLRenderer() {
+    m_glTextures.clear();
+
     if (m_eglDisplay && m_eglContext != EGL_NO_CONTEXT)
         eglDestroyContext(m_eglDisplay, m_eglContext);
 

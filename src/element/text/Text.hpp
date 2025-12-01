@@ -4,13 +4,16 @@
 #include <hyprtoolkit/element/Text.hpp>
 #include <pango/pangocairo.h>
 
+#include <mutex>
+#include <atomic>
+
 #include "../../helpers/Memory.hpp"
 #include "../../core/InternalBackend.hpp"
 
 namespace Hyprtoolkit {
     struct STextData {
         std::string                              text;
-        std::string                              fontFamily = "Sans Serif";
+        std::string                              fontFamily = g_palette ? g_palette->m_vars.fontFamily : "Sans Serif";
         CFontSize                                fontSize{CFontSize::HT_FONT_TEXT};
         eFontAlignment                           align       = HT_FONT_ALIGN_LEFT;
         colorFn                                  color       = [] { return g_backend->getPalette()->m_colors.text; };
@@ -19,6 +22,7 @@ namespace Hyprtoolkit {
         std::optional<Hyprutils::Math::Vector2D> clampSize;
         CDynamicSize                             size{CDynamicSize::HT_SIZE_PERCENT, CDynamicSize::HT_SIZE_PERCENT, {1, 1}};
         std::function<void()>                    callback; // called after resource is loaded
+        bool                                     async = true;
     };
 
     struct STextImpl {
@@ -46,6 +50,9 @@ namespace Hyprtoolkit {
         float                                                                                          getCursorPos(const Hyprutils::Math::Vector2D& click);
         Hyprutils::Math::Vector2D                                                                      unscale(const Hyprutils::Math::Vector2D& x);
         std::tuple<UP<Hyprgraphics::CCairoSurface>, cairo_t*, PangoLayout*, Hyprutils::Math::Vector2D> prepPangoLayout();
+        void                                                                                           scheduleTexRefresh();
+        void                                                                                           renderTex();
+        void                                                                                           postTexLoad();
 
         friend class CTextboxElement;
         friend struct STextboxImpl;

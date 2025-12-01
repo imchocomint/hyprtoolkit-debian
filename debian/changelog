@@ -1,8 +1,10 @@
 hyprtoolkit (0.4.0-1) UNRELEASED; urgency=medium
 
   * New upstream version 0.4.0
+  * refresh patches
+  * d/control: bump SOVERSION to 4
 
- -- Carl Keinath <carl.keinath@gmail.com>  Mon, 01 Dec 2025 08:32:29 +0100
+ -- Carl Keinath <carl.keinath@gmail.com>  Mon, 01 Dec 2025 09:05:54 +0100
 
 hyprtoolkit (0.3.0-1) unstable; urgency=medium
 

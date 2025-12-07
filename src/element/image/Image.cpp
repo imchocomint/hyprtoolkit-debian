@@ -59,6 +59,10 @@ void CImageElement::renderTex() {
     if (m_impl->waitingForTex)
         return;
 
+    // TODO: this happens in hyprpaper's case, but if we have two or more wallpapers of the same
+    // image we duplicate VRAM. Maybe keep an asset ref table?
+    // ofc this won't work for svg but rasters of course.
+
     m_impl->resource.reset();
     m_impl->oldTex = m_impl->tex;
     m_impl->tex.reset();
@@ -81,30 +85,45 @@ void CImageElement::renderTex() {
 
     g_asyncResourceGatherer->enqueue(resourceGeneric);
 
-    m_impl->resource->m_events.finished.listenStatic([this, self = impl->self] {
-        if (!self)
-            return;
-
-        g_backend->addIdle([this, self = self]() {
+    if (!m_impl->data.sync) {
+        m_impl->resource->m_events.finished.listenStatic([this, self = impl->self] {
             if (!self)
                 return;
 
-            if (m_impl->resource->m_asset.cairoSurface) {
-                ASP<IAsyncResource> resourceGeneric(m_impl->resource);
-                m_impl->size = m_impl->resource->m_asset.pixelSize;
-                m_impl->tex  = g_renderer->uploadTexture({.resource = resourceGeneric});
-            } else {
-                m_impl->failed = true;
-                g_logger->log(HT_LOG_ERROR, "Image: failed loading, hyprgraphics couldn't load asset {}", m_impl->lastPath);
-            }
+            g_backend->addIdle([this, self = self]() {
+                if (!self)
+                    return;
 
-            m_impl->oldTex.reset();
-
-            m_impl->waitingForTex = false;
-            if (!m_impl->failed)
-                impl->damageEntire();
+                m_impl->postImageLoad();
+            });
         });
-    });
+    } else {
+        g_asyncResourceGatherer->await(resourceGeneric);
+        m_impl->postImageLoad();
+    }
+}
+
+void SImageImpl::postImageLoad() {
+    if (!resource)
+        return;
+
+    if (resource->m_asset.cairoSurface) {
+        ASP<IAsyncResource> resourceGeneric(resource);
+        size = resource->m_asset.pixelSize;
+        tex  = g_renderer->uploadTexture({.resource = resourceGeneric, .fitMode = data.fitMode});
+    } else {
+        failed = true;
+        g_logger->log(HT_LOG_ERROR, "Image: failed loading, hyprgraphics couldn't load asset {}", lastPath);
+    }
+
+    oldTex.reset();
+    resource.reset();
+
+    waitingForTex = false;
+    if (!failed) {
+        self->impl->damageEntire();
+        self->impl->window->scheduleReposition(self);
+    }
 }
 
 SP<CImageBuilder> CImageElement::rebuild() {
@@ -135,7 +154,24 @@ Hyprutils::Math::Vector2D CImageElement::size() {
 }
 
 std::optional<Vector2D> CImageElement::preferredSize(const Hyprutils::Math::Vector2D& parent) {
-    return impl->getPreferredSizeGeneric(m_impl->data.size, parent);
+    auto s = m_impl->data.size.calculate(parent);
+    if (s.x != -1 && s.y != -1)
+        return s;
+
+    const float SCALE = impl->window ? impl->window->scale() : 1.F;
+
+    if (s.x == -1 && s.y == -1)
+        return m_impl->size / SCALE;
+
+    if (m_impl->size.y == 0)
+        return impl->getPreferredSizeGeneric(m_impl->data.size, parent);
+
+    const double ASPECT_RATIO = m_impl->size.x / m_impl->size.y;
+
+    if (s.y == -1)
+        return Vector2D{s.x, s.x * (1 / ASPECT_RATIO)};
+
+    return Vector2D{ASPECT_RATIO * s.y, s.y};
 }
 
 std::optional<Vector2D> CImageElement::minimumSize(const Hyprutils::Math::Vector2D& parent) {

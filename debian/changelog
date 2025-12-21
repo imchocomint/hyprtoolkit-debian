@@ -1,8 +1,8 @@
-hyprtoolkit (0.4.1-1) UNRELEASED; urgency=medium
+hyprtoolkit (0.4.1-1) unstable; urgency=medium
 
   * New upstream version 0.4.1
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sun, 07 Dec 2025 13:40:41 +0100
+ -- Carl Keinath <carl.keinath@gmail.com>  Sun, 21 Dec 2025 15:44:25 +0100
 
 hyprtoolkit (0.4.0-1) unstable; urgency=medium
 

@@ -9,7 +9,7 @@ Origin: Debian
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 94576df..0016225 100644
+index c0a4702..56c2f8b 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -19,7 +19,7 @@ set(INCLUDE ${CMAKE_INSTALL_FULL_INCLUDEDIR})
@@ -24,9 +24,9 @@ index 94576df..0016225 100644
 @@ -73,7 +73,7 @@ target_include_directories(
    PRIVATE "./src" "./src/include" "./protocols" "${CMAKE_BINARY_DIR}")
  set_target_properties(hyprtoolkit PROPERTIES VERSION ${HYPRTOOLKIT_VERSION}
-                                              SOVERSION 4)
+                                              SOVERSION 5)
 -target_link_libraries(hyprtoolkit PUBLIC OpenGL::EGL OpenGL::OpenGL
-+                                           target_link_libraries(hyprtoolkit PUBLIC OpenGL::EGL OpenGL::GLES3
++target_link_libraries(hyprtoolkit PUBLIC OpenGL::EGL OpenGL::GLES3
                                           PkgConfig::deps)
  
  check_include_file("sys/timerfd.h" HAS_TIMERFD)

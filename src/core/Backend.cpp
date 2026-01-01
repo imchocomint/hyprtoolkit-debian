@@ -52,6 +52,16 @@ CBackend::CBackend() {
 }
 
 CBackend::~CBackend() {
+    destroy();
+
+    g_openGL.reset();
+    g_renderer.reset();
+    g_config.reset();
+    g_palette.reset();
+    g_iconFactory.reset();
+    g_waylandPlatform.reset();
+    g_logger.reset();
+
     close(m_sLoopState.exitfd[0]);
     close(m_sLoopState.exitfd[1]);
     close(m_sLoopState.wakeupfd[0]);
@@ -61,6 +71,7 @@ CBackend::~CBackend() {
 IBackend::SBackendCreationData::SBackendCreationData() = default;
 
 SP<IBackend> IBackend::createWithData(const IBackend::SBackendCreationData& data) {
+    g_logger                     = makeShared<CLogger>();
     g_logger->m_loggerConnection = data.pLogConnection;
     g_logger->updateLogLevel();
     return IBackend::create();
@@ -69,6 +80,9 @@ SP<IBackend> IBackend::createWithData(const IBackend::SBackendCreationData& data
 SP<IBackend> IBackend::create() {
     if (g_backend)
         return nullptr;
+
+    g_logger = makeShared<CLogger>();
+
     g_backend = SP<CBackend>(new CBackend());
     g_config  = makeShared<CConfigManager>();
     g_config->parse();
@@ -76,11 +90,13 @@ SP<IBackend> IBackend::create() {
     g_iconFactory = SP<CSystemIconFactory>(new CSystemIconFactory());
     if (!g_backend->m_aqBackend || !g_backend->m_aqBackend->start()) {
         g_logger->log(HT_LOG_ERROR, "couldn't start aq backend");
+        g_backend.reset();
         return nullptr;
     }
     g_waylandPlatform = makeUnique<CWaylandPlatform>();
     if (!g_waylandPlatform->attempt()) {
         g_waylandPlatform = nullptr;
+        g_backend.reset();
         return nullptr;
     }
     g_openGL   = makeShared<COpenGLRenderer>(g_waylandPlatform->m_drmState.fd);
@@ -171,12 +187,30 @@ void CBackend::addIdle(const std::function<void()>& fn) {
 }
 
 void CBackend::terminate() {
+    if (m_terminate)
+        return;
+
     m_terminate = true;
 
     if (m_sLoopState.eventLoopMutex.try_lock()) {
         m_sLoopState.event = true;
         m_sLoopState.loopCV.notify_all();
         m_sLoopState.eventLoopMutex.unlock();
+    }
+
+    if (m_sLoopState.eventLoopThreadID == -1) {
+        // we are not in a thread loop at all, so we
+        g_renderer.reset();
+        g_openGL.reset();
+
+        g_waylandPlatform.reset();
+
+        g_asyncResourceGatherer.reset();
+        g_animationManager.reset();
+
+        g_palette.reset();
+        g_backend.reset();
+        g_logger.reset();
     }
 }
 
@@ -381,6 +415,8 @@ void CBackend::enterLoop() {
 
     m_sLoopState.event = true; // let it process once
 
+    m_sLoopState.eventLoopThreadID = gettid();
+
     while (!m_terminate) {
         std::unique_lock lk(m_sLoopState.eventRequestMutex);
         if (!m_sLoopState.event)
@@ -464,6 +500,8 @@ void CBackend::enterLoop() {
             rebuildPollfds(false);
         }
     }
+
+    m_sLoopState.eventLoopThreadID = -1;
 
     g_renderer.reset();
     g_openGL.reset();

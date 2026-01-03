@@ -26,7 +26,7 @@ Build-Depends:
  libhyprgraphics-dev (>= 0.5.0),
  libaquamarine-dev (>= 0.10.0),
  libgtest-dev,
-Standards-Version: 4.7.2
+Standards-Version: 4.7.3
 Homepage: https://github.com/hyprwm/hyprtoolkit
 Vcs-Browser: https://salsa.debian.org/hyprland-team/hyprtoolkit
 Vcs-Git: https://salsa.debian.org/hyprland-team/hyprtoolkit.git

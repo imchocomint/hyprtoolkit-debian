@@ -6,8 +6,9 @@ hyprtoolkit (0.5.1-1) UNRELEASED; urgency=medium
   - set min required hyprutils to >= 0.11.0
   - bump SOVERSION to 5
   - set min required hyprgraphics to >= 0.5.0
+  * bump Standards-Version to 4.7.3
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sat, 03 Jan 2026 09:18:00 +0100
+ -- Carl Keinath <carl.keinath@gmail.com>  Sat, 03 Jan 2026 09:21:53 +0100
 
 hyprtoolkit (0.4.1-1) unstable; urgency=medium
 

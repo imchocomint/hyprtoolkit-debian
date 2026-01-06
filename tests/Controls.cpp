@@ -30,6 +30,7 @@ using namespace Hyprtoolkit;
 
 static SP<IBackend>             backend;
 static SP<CSliderElement>       hiddenSlider;
+static SP<CTextElement>         hiddenText;
 static SP<CColumnLayoutElement> mainLayout;
 static SP<IWindow>              window;
 static SP<IWindow>              popup;
@@ -45,6 +46,17 @@ static void toggleVisibilityOfSecretSlider() {
         mainLayout->addChild(hiddenSlider);
     else
         mainLayout->removeChild(hiddenSlider);
+
+    visible = !visible;
+}
+
+static void toggleTextVisibility() {
+    static bool visible = false;
+
+    if (!visible)
+        mainLayout->addChild(hiddenText);
+    else
+        mainLayout->removeChild(hiddenText);
 
     visible = !visible;
 }
@@ -113,7 +125,7 @@ int main(int argc, char** argv, char** envp) {
 
     //
     window = CWindowBuilder::begin() //
-                 ->preferredSize({480, 480})
+                 ->preferredSize({480, 700})
                  ->minSize({480, 480})
                  ->maxSize({1280, 720})
                  ->appTitle("Controls")
@@ -167,6 +179,12 @@ int main(int argc, char** argv, char** envp) {
                        ->onMainClick([](SP<CButtonElement>) { selectTextbox(); })
                        ->commence();
 
+    auto button4 = CButtonBuilder::begin()
+                       ->label("Show text")
+                       ->size({CDynamicSize::HT_SIZE_AUTO, CDynamicSize::HT_SIZE_AUTO, {1, 1}})
+                       ->onMainClick([](SP<CButtonElement>) { toggleTextVisibility(); })
+                       ->commence();
+
     auto checkbox  = stretchLayout("checkbox 1", CCheckboxBuilder::begin()->commence());
     auto checkbox2 = stretchLayout("checkbox 2", CCheckboxBuilder::begin()->commence());
 
@@ -196,15 +214,25 @@ int main(int argc, char** argv, char** envp) {
 
     auto textboxCont = stretchLayout("Textbox", textbox);
 
-    auto text = CTextBuilder::begin()->text("This is a link test: <a href=\"https://hypr.land\">click me</a>!")->commence();
+    auto text = CTextBuilder::begin()
+                    ->text("This is a link test: <a href=\"https://hypr.land\">click me</a>! Test overflow as well woo woo woo woo woo woo woo woo I am vaxry")
+                    ->commence();
+    text->setTooltip("Example tooltip!");
 
     hiddenSlider = CSliderBuilder::begin()->max(100)->val(69)->size({CDynamicSize::HT_SIZE_PERCENT, CDynamicSize::HT_SIZE_ABSOLUTE, {1.F, SLIDER_HEIGHT}})->commence();
+    hiddenText   = CTextBuilder::begin()
+                     ->text("hi hi overflow overflow overflow overflow overflow overflow overflow overflow overflow overflow overflow overflow overflow overflow overflow")
+                     ->commence();
+
+    auto rowl = CRowLayoutBuilder::begin()->size({CDynamicSize::HT_SIZE_PERCENT, CDynamicSize::HT_SIZE_AUTO, {1, 1}})->commence();
+    rowl->addChild(CTextBuilder::begin()->text("hello this will be ellipsized woooo oooo ooo oo oo oo oo o oo")->commence());
 
     mainLayout->addChild(title);
     mainLayout->addChild(hr);
     mainLayout->addChild(button1);
     mainLayout->addChild(button2);
     mainLayout->addChild(button3);
+    mainLayout->addChild(button4);
     mainLayout->addChild(checkbox);
     mainLayout->addChild(checkbox2);
     mainLayout->addChild(spinbox);
@@ -213,6 +241,7 @@ int main(int argc, char** argv, char** envp) {
     mainLayout->addChild(combo);
     mainLayout->addChild(textboxCont);
     mainLayout->addChild(text);
+    mainLayout->addChild(rowl);
 
     auto iconDesc = backend->systemIcons()->lookupIcon("action-unavailable-symbolic");
     if (!iconDesc->exists())

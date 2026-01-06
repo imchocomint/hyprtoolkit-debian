@@ -132,8 +132,14 @@ void CTextElement::reposition(const Hyprutils::Math::CBox& box, const Hyprutils:
         if (SIZE.y + 1 < DESIRED.y)
             m_impl->lastMaxSize.y = SIZE.y;
 
-        if (PREV != m_impl->lastMaxSize)
+        if (PREV != m_impl->lastMaxSize) {
             m_impl->needsTexRefresh = true;
+            const auto LAST_PREF    = m_impl->preferred;
+            m_impl->lastScale       = impl->window ? impl->window->scale() : 1.F;
+            m_impl->preferred       = m_impl->getTextSizePreferred();
+            if (impl->window && (std::abs(LAST_PREF.x - m_impl->preferred.x) > 2 || std::abs(LAST_PREF.y - m_impl->preferred.y) > 2))
+                impl->window->scheduleReposition(impl->self.lock());
+        }
     }
 
     g_positioner->positionChildren(impl->self.lock());
@@ -160,7 +166,7 @@ std::optional<Vector2D> CTextElement::minimumSize(const Hyprutils::Math::Vector2
 }
 
 bool CTextElement::acceptsMouseInput() {
-    return m_impl->data.interactable.value_or(!m_impl->parsedLinks.empty());
+    return m_impl->data.interactable.value_or(!m_impl->parsedLinks.empty()) || IElement::acceptsMouseInput();
 }
 
 std::function<ePointerShape()> CTextElement::pointerShapeFn() {
@@ -223,8 +229,8 @@ std::tuple<UP<Hyprgraphics::CCairoSurface>, cairo_t*, PangoLayout*, Vector2D> ST
         (*maxSize) *= lastScale;
 
     if (maxSize.has_value()) {
-        const auto CLAMP_SIZE = maxSize.value() * lastScale;
-        if (!data.noEllipsize)
+        const auto CLAMP_SIZE = maxSize.value();
+        if (!data.noEllipsize && maxSize.has_value() && maxSize->y >= 0)
             pango_layout_set_ellipsize(layout, PANGO_ELLIPSIZE_END);
         if (CLAMP_SIZE.x >= 0)
             pango_layout_set_width(layout, std::min(logical.width * PANGO_SCALE, sc<int>(CLAMP_SIZE.x * PANGO_SCALE)));
@@ -250,12 +256,12 @@ Hyprutils::Math::Vector2D STextImpl::getTextSizePreferred() {
     return LAYOUTSIZE / lastScale;
 }
 
-CBox STextImpl::getCharBox(size_t charIdxUTF8) {
+CBox STextImpl::getCharBox(size_t offset) {
     auto [CAIROSURFACE, CAIRO, LAYOUT, LAYOUTSIZE] = prepPangoLayout();
 
     PangoRectangle rect;
 
-    pango_layout_index_to_pos(LAYOUT, UTF8::utf8ToOffset(parsedText, charIdxUTF8), &rect);
+    pango_layout_index_to_pos(LAYOUT, offset, &rect);
 
     CBox charBox =
         CBox{
@@ -272,7 +278,7 @@ CBox STextImpl::getCharBox(size_t charIdxUTF8) {
     return charBox;
 }
 
-std::optional<size_t> STextImpl::vecToCharIdx(const Vector2D& vec) {
+std::optional<size_t> STextImpl::vecToOffset(const Vector2D& vec) {
     auto [CAIROSURFACE, CAIRO, LAYOUT, LAYOUTSIZE] = prepPangoLayout();
 
     auto pangoX = sc<int>(vec.x * PANGO_SCALE), //
@@ -287,23 +293,23 @@ std::optional<size_t> STextImpl::vecToCharIdx(const Vector2D& vec) {
     if (index == -1)
         return std::nullopt;
 
-    return UTF8::offsetToUTF8Len(parsedText, index + trailing);
+    return index + trailing;
 }
 
-float STextImpl::getCursorPos(size_t charIdx) {
-    if (charIdx >= UTF8::length(parsedText))
+float STextImpl::getCursorPos(size_t offset) {
+    if (offset >= parsedText.length())
         return preferred.x;
 
-    if (charIdx == 0)
+    if (offset == 0)
         return 0;
 
-    auto box = getCharBox(charIdx - 1);
+    auto box = getCharBox(offset);
 
-    return (box.x + box.w);
+    return box.x;
 }
 
 float STextImpl::getCursorPos(const Hyprutils::Math::Vector2D& click) {
-    return getCursorPos(vecToCharIdx(click).value_or(UTF8::length(parsedText)));
+    return getCursorPos(vecToOffset(click).value_or(parsedText.length()));
 }
 
 Vector2D STextImpl::unscale(const Vector2D& x) {
@@ -350,7 +356,7 @@ void STextImpl::renderTex() {
                 Hyprgraphics::CTextResource::TEXT_ALIGN_LEFT :
                 (data.align == HT_FONT_ALIGN_CENTER ? Hyprgraphics::CTextResource::TEXT_ALIGN_CENTER : Hyprgraphics::CTextResource::TEXT_ALIGN_RIGHT),
         .maxSize   = maxSize,
-        .ellipsize = maxSize.has_value() && maxSize->y >= 0,
+        .ellipsize = !data.noEllipsize && maxSize.has_value() && maxSize->y >= 0,
         .wrap      = maxSize.has_value() && maxSize->x >= 0,
     });
 
@@ -465,7 +471,7 @@ void STextImpl::recheckTextBoxes() {
     for (auto& link : parsedLinks) {
         link.region.clear();
         for (size_t i = link.begin; i < link.end + 1; ++i) {
-            auto box = getCharBox(UTF8::offsetToUTF8Len(parsedText, i));
+            auto box = getCharBox(i);
             link.region.add(box);
         }
     }

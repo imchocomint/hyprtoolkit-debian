@@ -1,11 +1,11 @@
-hyprtoolkit (0.5.1-1) UNRELEASED; urgency=medium
+hyprtoolkit (0.5.1-1) unstable; urgency=medium
 
   * New upstream version 0.5.1
   * refresh patches
   * d/control:
-  - set min required hyprutils to >= 0.11.0
-  - bump SOVERSION to 5
-  - set min required hyprgraphics to >= 0.5.0
+    - set min required hyprutils to >= 0.11.0
+    - bump SOVERSION to 5
+    - set min required hyprgraphics to >= 0.5.0
   * bump Standards-Version to 4.7.3
 
  -- Carl Keinath <carl.keinath@gmail.com>  Sat, 03 Jan 2026 09:21:53 +0100

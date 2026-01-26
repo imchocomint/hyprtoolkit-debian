@@ -1,3 +1,9 @@
+hyprtoolkit (0.5.3-1) unstable; urgency=medium
+
+  * New upstream version 0.5.3
+
+ -- Chow Loong Jin <hyperair@debian.org>  Mon, 26 Jan 2026 14:08:08 +0900
+
 hyprtoolkit (0.5.2-1) unstable; urgency=medium
 
   * New upstream version 0.5.2

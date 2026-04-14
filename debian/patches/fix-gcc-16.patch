@@ -1,0 +1,23 @@
+Author: Stephen Degler <stephen@degler.net>
+Subject: fix-gcc-16
+Description: Fix FTBFS with GCC 16 due to missing NAME_MAX declaration.
+ Can be dropped when after next hyprtoolkit release.
+Origin: https://github.com/hyprwm/hyprtoolkit/pull/39
+Applied-Upstream: 7c41a27
+
+---
+ src/palette/ConfigManager.cpp | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/palette/ConfigManager.cpp b/src/palette/ConfigManager.cpp
+index 2d46413..a8eaa9d 100644
+--- a/src/palette/ConfigManager.cpp
++++ b/src/palette/ConfigManager.cpp
+@@ -8,6 +8,7 @@
+ #include <glob.h>
+ #include <filesystem>
+ #include <cstring>
++#include <climits>
+ 
+ using namespace Hyprtoolkit;
+ 

@@ -54,33 +54,24 @@ void CTextboxElement::init() {
     m_impl->bgInnerCont = CNullBuilder::begin()->size({CDynamicSize::HT_SIZE_PERCENT, CDynamicSize::HT_SIZE_PERCENT, {1.F, 1.F}})->commence();
     m_impl->bgInnerCont->setMargin(3);
 
-    m_impl->selectBgCont = CNullBuilder::begin()->size({CDynamicSize::HT_SIZE_PERCENT, CDynamicSize::HT_SIZE_PERCENT, {1.F, 0.7F}})->commence();
-    m_impl->selectBg     = CRectangleBuilder::begin()
-                           ->color([] {
-                               auto x = g_palette->m_colors.accent.darken(0.4F);
-                               x.a    = 0.5F;
-                               return x;
-                           })
-                           ->commence();
-
+    m_impl->selectBgCont = CNullBuilder::begin()->size({CDynamicSize::HT_SIZE_PERCENT, CDynamicSize::HT_SIZE_PERCENT, {1.F, 1.F}})->commence();
     m_impl->selectBgCont->setPositionMode(HT_POSITION_ABSOLUTE);
-    m_impl->selectBgCont->setPositionFlag(HT_POSITION_FLAG_VCENTER, true);
-    m_impl->selectBg->setPositionMode(HT_POSITION_ABSOLUTE);
-
-    m_impl->selectBgCont->addChild(m_impl->selectBg);
 
     m_impl->cursorCont = CNullBuilder::begin()->size({CDynamicSize::HT_SIZE_PERCENT, CDynamicSize::HT_SIZE_PERCENT, {1.F, 0.8F}})->commence();
     m_impl->cursor =
         CRectangleBuilder::begin()->color([] { return g_palette->m_colors.text; })->size({CDynamicSize::HT_SIZE_ABSOLUTE, CDynamicSize::HT_SIZE_PERCENT, {1.F, 1.F}})->commence();
 
     m_impl->cursorCont->setPositionMode(HT_POSITION_ABSOLUTE);
-    m_impl->cursorCont->setPositionFlag(HT_POSITION_FLAG_VCENTER, true);
+    if (!m_impl->data.multiline)
+        m_impl->cursorCont->setPositionFlag(HT_POSITION_FLAG_VCENTER, true);
     m_impl->cursor->setPositionMode(HT_POSITION_ABSOLUTE);
 
     m_impl->placeholder->setPositionMode(HT_POSITION_ABSOLUTE);
-    m_impl->placeholder->setPositionFlag(HT_POSITION_FLAG_VCENTER, true);
+    if (!m_impl->data.multiline)
+        m_impl->placeholder->setPositionFlag(HT_POSITION_FLAG_VCENTER, true);
     m_impl->text->setPositionMode(HT_POSITION_ABSOLUTE);
-    m_impl->text->setPositionFlag(HT_POSITION_FLAG_VCENTER, true);
+    if (!m_impl->data.multiline)
+        m_impl->text->setPositionFlag(HT_POSITION_FLAG_VCENTER, true);
 
     m_impl->listeners.mouseMove = impl->m_externalEvents.mouseMove.listen([this](Vector2D pos) { m_impl->lastCursorPos = pos; });
 
@@ -218,6 +209,86 @@ void CTextboxElement::init() {
             return;
         }
 
+        if (ev.xkbKeysym == XKB_KEY_Up) {
+            if (!m_impl->data.multiline)
+                return;
+
+            const auto oldCursorPos = m_impl->inputState.cursor;
+            const auto CHARBOX      = m_impl->text->m_impl->getCharBox(m_impl->inputState.cursor);
+            const auto SCALE        = m_impl->self->impl->window ? m_impl->self->impl->window->scale() : 1.F;
+
+            // move up by one line height, using the left edge of the character box
+            Vector2D targetPos = {CHARBOX.x, CHARBOX.y - (CHARBOX.h / 2.F)};
+            targetPos          = targetPos * SCALE;
+
+            auto newOffset = m_impl->text->m_impl->vecToOffset(targetPos);
+            if (newOffset.has_value())
+                m_impl->inputState.cursor = std::min(newOffset.value(), m_impl->data.text.length());
+
+            if (ev.modMask & Input::HT_MODIFIER_SHIFT) {
+                if (!m_impl->hasSelect()) {
+                    m_impl->inputState.selectBegin = m_impl->inputState.cursor;
+                    m_impl->inputState.selectEnd   = oldCursorPos;
+                } else {
+                    if (sc<ssize_t>(oldCursorPos) == m_impl->inputState.selectEnd)
+                        m_impl->inputState.selectEnd = m_impl->inputState.cursor;
+                    else
+                        m_impl->inputState.selectBegin = m_impl->inputState.cursor;
+                    const auto selectBegin         = std::min(m_impl->inputState.selectBegin, m_impl->inputState.selectEnd);
+                    const auto selectEnd           = std::max(m_impl->inputState.selectBegin, m_impl->inputState.selectEnd);
+                    m_impl->inputState.selectBegin = selectBegin;
+                    m_impl->inputState.selectEnd   = selectEnd;
+                }
+                m_impl->updateSelect();
+            } else if (m_impl->hasSelect()) {
+                m_impl->inputState.cursor = m_impl->inputState.selectBegin;
+                m_impl->clearSelect();
+            }
+
+            m_impl->updateCursor();
+            return;
+        }
+
+        if (ev.xkbKeysym == XKB_KEY_Down) {
+            if (!m_impl->data.multiline)
+                return;
+
+            const auto oldCursorPos = m_impl->inputState.cursor;
+            const auto CHARBOX      = m_impl->text->m_impl->getCharBox(m_impl->inputState.cursor);
+            const auto SCALE        = m_impl->self->impl->window ? m_impl->self->impl->window->scale() : 1.F;
+
+            // move down by one line height, using the left edge of the character box
+            Vector2D targetPos = {CHARBOX.x, CHARBOX.y + (CHARBOX.h * 1.5F)};
+            targetPos          = targetPos * SCALE;
+
+            auto newOffset = m_impl->text->m_impl->vecToOffset(targetPos);
+            if (newOffset.has_value())
+                m_impl->inputState.cursor = std::min(newOffset.value(), m_impl->data.text.length());
+
+            if (ev.modMask & Input::HT_MODIFIER_SHIFT) {
+                if (!m_impl->hasSelect()) {
+                    m_impl->inputState.selectBegin = oldCursorPos;
+                    m_impl->inputState.selectEnd   = m_impl->inputState.cursor;
+                } else {
+                    if (sc<ssize_t>(oldCursorPos) == m_impl->inputState.selectEnd)
+                        m_impl->inputState.selectEnd = m_impl->inputState.cursor;
+                    else
+                        m_impl->inputState.selectBegin = m_impl->inputState.cursor;
+                    const auto selectBegin         = std::min(m_impl->inputState.selectBegin, m_impl->inputState.selectEnd);
+                    const auto selectEnd           = std::max(m_impl->inputState.selectBegin, m_impl->inputState.selectEnd);
+                    m_impl->inputState.selectBegin = selectBegin;
+                    m_impl->inputState.selectEnd   = selectEnd;
+                }
+                m_impl->updateSelect();
+            } else if (m_impl->hasSelect()) {
+                m_impl->inputState.cursor = m_impl->inputState.selectEnd;
+                m_impl->clearSelect();
+            }
+
+            m_impl->updateCursor();
+            return;
+        }
+
         if (ev.xkbKeysym == XKB_KEY_Home || ev.xkbKeysym == XKB_KEY_KP_Home) {
             m_impl->inputState.cursor = 0;
             m_impl->updateCursor();
@@ -253,7 +324,7 @@ void CTextboxElement::init() {
         if (ev.utf8.empty())
             return;
 
-        if (ev.utf8 == "\n" && !m_impl->data.multiline)
+        if ((ev.utf8 == "\n" || ev.utf8 == "\r") && !m_impl->data.multiline)
             return;
 
         m_impl->removeSelectedText();
@@ -340,15 +411,21 @@ void CTextboxElement::imApplyText() {
 void STextboxImpl::updateCursor() {
     inputState.cursor = std::clamp(inputState.cursor, (size_t)0, data.text.length());
 
-    const float WIDTH = text->m_impl->getCursorPos(inputState.cursor);
+    const auto  CHARBOX = text->m_impl->getCharBox(inputState.cursor);
+    const float XPOS    = CHARBOX.x;
 
-    cursor->setAbsolutePosition({
-        WIDTH,
-        0.F,
-    });
+    if (data.multiline) {
+        // For multiline, size the cursor to match the line height and position it at the character's Y position
+        cursor->rebuild()->size({CDynamicSize::HT_SIZE_ABSOLUTE, CDynamicSize::HT_SIZE_ABSOLUTE, {1.F, CHARBOX.h}})->commence();
+        cursor->setAbsolutePosition({XPOS, CHARBOX.y});
+    } else {
+        // For single-line, keep the cursor at 100% height and centered
+        cursor->rebuild()->size({CDynamicSize::HT_SIZE_ABSOLUTE, CDynamicSize::HT_SIZE_PERCENT, {1.F, 1.F}})->commence();
+        cursor->setAbsolutePosition({XPOS, 0.F});
+    }
 
     if (self->impl->window)
-        self->impl->window->setIMTo(self->impl->position.copy().translate({std::clamp(WIDTH, 0.F, sc<float>(self->impl->position.w)), 0.F}), data.text, inputState.cursor);
+        self->impl->window->setIMTo(self->impl->position.copy().translate({std::clamp(XPOS, 0.F, sc<float>(self->impl->position.w)), 0.F}), data.text, inputState.cursor);
 
     g_positioner->repositionNeeded(cursor);
 }
@@ -371,18 +448,91 @@ void STextboxImpl::clearSelect() {
 }
 
 void STextboxImpl::updateSelect() {
+    for (auto& selectBg : selectBgs) {
+        selectBgCont->removeChild(selectBg);
+    }
+    selectBgs.clear();
+
     if (inputState.selectBegin < 0) {
         bgInnerCont->removeChild(selectBgCont);
         return;
     }
 
-    float begin = text->m_impl->getCursorPos(inputState.selectBegin), //
-        end     = text->m_impl->getCursorPos(inputState.selectEnd);
+    // get character boxes for selection start and end
+    auto beginBox = text->m_impl->getCharBox(inputState.selectBegin);
+    auto endBox   = text->m_impl->getCharBox(inputState.selectEnd);
 
-    float width = end - begin;
+    // check if selection spans multiple lines
+    const float LINE_THRESHOLD = 1.F; // tolerance for Y position comparison
+    bool        isMultiline    = std::abs(beginBox.y - endBox.y) > LINE_THRESHOLD;
 
-    selectBg->rebuild()->size({CDynamicSize::HT_SIZE_ABSOLUTE, CDynamicSize::HT_SIZE_PERCENT, {width, 1.F}})->commence();
-    selectBg->setAbsolutePosition(Vector2D{begin, 0.F});
+    if (!isMultiline) {
+        float width = endBox.x - beginBox.x;
+
+        auto  selectBg = CRectangleBuilder::begin()
+                            ->color([] {
+                                auto x = g_palette->m_colors.accent.darken(0.4F);
+                                x.a    = 0.5F;
+                                return x;
+                            })
+                            ->size({CDynamicSize::HT_SIZE_ABSOLUTE, CDynamicSize::HT_SIZE_ABSOLUTE, {width, beginBox.h}})
+                            ->commence();
+
+        selectBg->setPositionMode(IElement::HT_POSITION_ABSOLUTE);
+        selectBg->setAbsolutePosition(Vector2D{beginBox.x, beginBox.y});
+
+        selectBgCont->addChild(selectBg);
+        selectBgs.push_back(selectBg);
+    } else {
+        // multiline selection - create rectangles for each line
+        size_t currentOffset = inputState.selectBegin;
+        auto   lineStartBox  = beginBox;
+
+        while (currentOffset < (size_t)inputState.selectEnd) {
+            // find the end of this line
+            size_t lineEndOffset = currentOffset;
+            auto   lineEndBox    = lineStartBox;
+
+            // scan forward on this line until we hit a line break or end of selection
+            for (size_t i = currentOffset + 1; i <= (size_t)inputState.selectEnd; i++) {
+                auto nextBox = text->m_impl->getCharBox(i);
+
+                // check if we moved to a new line
+                if (std::abs(nextBox.y - lineStartBox.y) > LINE_THRESHOLD)
+                    break;
+
+                lineEndOffset = i;
+                lineEndBox    = nextBox;
+            }
+
+            float width = lineEndBox.x - lineStartBox.x;
+
+            if (width > 0) {
+                auto selectBg = CRectangleBuilder::begin()
+                                    ->color([] {
+                                        auto x = g_palette->m_colors.accent.darken(0.4F);
+                                        x.a    = 0.5F;
+                                        return x;
+                                    })
+                                    ->size({CDynamicSize::HT_SIZE_ABSOLUTE, CDynamicSize::HT_SIZE_ABSOLUTE, {width, lineStartBox.h}})
+                                    ->commence();
+
+                selectBg->setPositionMode(IElement::HT_POSITION_ABSOLUTE);
+                selectBg->setAbsolutePosition(Vector2D{lineStartBox.x, lineStartBox.y});
+
+                selectBgCont->addChild(selectBg);
+                selectBgs.push_back(selectBg);
+            }
+
+            // move to the next line
+            if (lineEndOffset >= (size_t)inputState.selectEnd)
+                break;
+
+            currentOffset = lineEndOffset + 1;
+            if (currentOffset < (size_t)inputState.selectEnd)
+                lineStartBox = text->m_impl->getCharBox(currentOffset);
+        }
+    }
 
     bgInnerCont->addChild(selectBgCont);
 }
@@ -400,7 +550,8 @@ void STextboxImpl::removeSelectedText() {
 }
 
 void STextboxImpl::focusCursorAtClickedChar() {
-    inputState.cursor = text->m_impl->vecToOffset(lastCursorPos - (text->impl->position.pos() - self->impl->position.pos())).value_or(data.text.size());
+    const float SCALE = self->impl->window ? self->impl->window->scale() : 1.F;
+    inputState.cursor = text->m_impl->vecToOffset((lastCursorPos - (text->impl->position.pos() - self->impl->position.pos())) * SCALE).value_or(data.text.size());
     updateCursor();
     clearSelect();
 }

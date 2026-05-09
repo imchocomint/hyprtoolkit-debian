@@ -8,6 +8,7 @@
 #include <glob.h>
 #include <filesystem>
 #include <cstring>
+#include <linux/limits.h>
 
 using namespace Hyprtoolkit;
 
@@ -46,6 +47,9 @@ CConfigManager::CConfigManager() : m_inotifyFd(inotify_init()) {
 
     const auto CFGPATH = Hyprutils::Path::findConfig("hyprtoolkit").first.value_or("");
     m_configPath       = CFGPATH;
+
+    if (CFGPATH.empty())
+        g_logger->log(HT_LOG_DEBUG, "CConfigManager: no hyprtoolkit.conf found, using defaults (expected at $XDG_CONFIG_HOME/hypr/hyprtoolkit.conf or ~/.config/hypr/hyprtoolkit.conf)");
 
     m_config = makeUnique<Hyprlang::CConfig>(CFGPATH.c_str(), Hyprlang::SConfigOptions{.allowMissingConfig = true});
 

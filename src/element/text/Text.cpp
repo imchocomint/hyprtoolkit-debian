@@ -377,23 +377,26 @@ void STextImpl::renderTex() {
 
     ASP<IAsyncResource> resourceGeneric(resource);
 
-    g_asyncResourceGatherer->enqueue(resourceGeneric);
-
     if (!data.async) {
+        g_asyncResourceGatherer->enqueue(resourceGeneric);
         g_asyncResourceGatherer->await(resourceGeneric);
         postTexLoad();
     } else {
         resource->m_events.finished.listenStatic([this, self = self->impl->self] {
-            if (!self)
+            if (self.expired())
+                return;
+            if (!g_backend)
                 return;
 
             g_backend->addIdle([this, self = self]() {
-                if (!self)
+                if (self.expired())
                     return;
 
                 postTexLoad();
             });
         });
+
+        g_asyncResourceGatherer->enqueue(resourceGeneric);
     }
 }
 

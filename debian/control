@@ -8,24 +8,24 @@ Uploaders:
 Build-Depends:
  debhelper-compat (= 13),
  cmake,
- pkgconf,
- libegl-dev,
- libgles-dev,
  hyprwayland-scanner (>= 0.4.0),
- libwayland-dev,
- wayland-protocols,
- libhyprutils-dev (>= 0.11.0),
- libhyprlang-dev (>= 0.6.0),
- libpixman-1-dev,
- libdrm-dev,
- libgbm-dev,
- libxkbcommon-dev,
- libpango1.0-dev,
- libcairo2-dev,
- libiniparser-dev,
- libhyprgraphics-dev (>= 0.5.0),
  libaquamarine-dev (>= 0.10.0),
+ libcairo2-dev,
+ libdrm-dev,
+ libegl-dev,
+ libgbm-dev,
+ libgles-dev,
  libgtest-dev,
+ libhyprgraphics-dev (>= 0.5.0),
+ libhyprlang-dev (>= 0.6.0),
+ libhyprutils-dev (>= 0.11.0),
+ libiniparser-dev,
+ libpango1.0-dev,
+ libpixman-1-dev,
+ libwayland-dev,
+ libxkbcommon-dev,
+ pkgconf,
+ wayland-protocols,
 Standards-Version: 4.7.4
 Homepage: https://github.com/hyprwm/hyprtoolkit
 Vcs-Browser: https://salsa.debian.org/hyprland-team/hyprtoolkit
@@ -36,10 +36,10 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends:
+ libaquamarine-dev (>= 0.10.0),
+ libhyprgraphics-dev (>= 0.5.0),
  libhyprtoolkit5 (= ${binary:Version}),
  libhyprutils-dev (>= 0.11.0),
- libhyprgraphics-dev (>= 0.5.0),
- libaquamarine-dev (>= 0.10.0),
  ${misc:Depends},
 Description: Modern, wayland-native C++ GUI toolkit -- development files
  Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
@@ -57,8 +57,8 @@ Package: libhyprtoolkit5
 Architecture: any
 Multi-Arch: same
 Depends:
- ${shlibs:Depends},
  ${misc:Depends},
+ ${shlibs:Depends},
 Description: Modern, wayland-native C++ GUI toolkit -- binary files
  Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
  making wayland GUI apps, with a few goals:

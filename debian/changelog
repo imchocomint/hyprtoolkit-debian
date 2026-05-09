@@ -1,6 +1,7 @@
 hyprtoolkit (0.5.4-1) UNRELEASED; urgency=medium
 
   * New upstream version 0.5.4
+  * drop upstreamed patch
 
  -- Carl Keinath <carl.keinath@gmail.com>  Sat, 09 May 2026 19:55:10 +0200
 

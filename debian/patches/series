@@ -1,3 +1,2 @@
 Fix-opengl-linking.patch
 Fix-shader-inclusion-order.patch
-fix-gcc-16.patch

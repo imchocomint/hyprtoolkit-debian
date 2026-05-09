@@ -430,6 +430,9 @@ COpenGLRenderer::COpenGLRenderer(int drmFD) : m_drmFD(drmFD) {
 
     RASSERT(success, "EGL does not support KHR_platform_gbm or EXT_platform_device, this is an issue with your gpu driver.");
 
+    makeEGLCurrent();
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, cc<GLint*>(&m_maxTextureSize));
+
     auto* const EXTENSIONS = rc<const char*>(glGetString(GL_EXTENSIONS));
     RASSERT(EXTENSIONS, "Couldn't retrieve openGL extensions!");
 
@@ -536,6 +539,10 @@ COpenGLRenderer::~COpenGLRenderer() {
 
 bool COpenGLRenderer::explicitSyncSupported() {
     return !Env::envEnabled("HT_NO_EXPLICIT_SYNC") && m_syncobjSupported && m_exts.EGL_ANDROID_native_fence_sync_ext;
+}
+
+int COpenGLRenderer::getMaxTextureSize() {
+    return m_maxTextureSize;
 }
 
 CBox COpenGLRenderer::logicalToGL(const CBox& box, bool transform) {
@@ -760,8 +767,9 @@ void COpenGLRenderer::renderRectangle(const SRectangleRenderData& data) {
 }
 
 SP<IRendererTexture> COpenGLRenderer::uploadTexture(const STextureData& data) {
-    const auto TEX = makeShared<CGLTexture>(data.resource);
+    const auto TEX = makeShared<CGLTexture>();
     TEX->m_fitMode = data.fitMode;
+    TEX->attachAsync(TEX, data.resource);
     return TEX;
 }
 
@@ -896,17 +904,18 @@ void COpenGLRenderer::renderTexture(const STextureRenderData& data) {
     glUniform1i(shader->discardAlpha, 0);
     glUniform1i(shader->applyTint, 0);
 
+    std::array<float, 8> texVerts;
     if (data.texture->fitMode() == IMAGE_FIT_MODE_STRETCH || data.texture->fitMode() == IMAGE_FIT_MODE_CONTAIN) {
         glVertexAttribPointer(shader->posAttrib, 2, GL_FLOAT, GL_FALSE, 0, fullVerts);
         glVertexAttribPointer(shader->texAttrib, 2, GL_FLOAT, GL_FALSE, 0, fullVerts);
     } else if (data.texture->fitMode() == IMAGE_FIT_MODE_COVER) {
-        const auto VERTS = coverImage(data.box, tex->m_size);
+        texVerts = coverImage(data.box, tex->m_size);
         glVertexAttribPointer(shader->posAttrib, 2, GL_FLOAT, GL_FALSE, 0, fullVerts);
-        glVertexAttribPointer(shader->texAttrib, 2, GL_FLOAT, GL_FALSE, 0, VERTS.data());
+        glVertexAttribPointer(shader->texAttrib, 2, GL_FLOAT, GL_FALSE, 0, texVerts.data());
     } else if (data.texture->fitMode() == IMAGE_FIT_MODE_TILE) {
-        const auto VERTS = tileImage(data.box, tex->m_size);
+        texVerts = tileImage(data.box, tex->m_size);
         glVertexAttribPointer(shader->posAttrib, 2, GL_FLOAT, GL_FALSE, 0, fullVerts);
-        glVertexAttribPointer(shader->texAttrib, 2, GL_FLOAT, GL_FALSE, 0, VERTS.data());
+        glVertexAttribPointer(shader->texAttrib, 2, GL_FLOAT, GL_FALSE, 0, texVerts.data());
         glTexParameteri(tex->m_target, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(tex->m_target, GL_TEXTURE_WRAP_T, GL_REPEAT);
     }

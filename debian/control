@@ -4,6 +4,7 @@ Maintainer: Debian Hyprland Maintainers <team+hyprland@tracker.debian.org>
 Uploaders:
  Carl Keinath <carl.keinath@gmail.com>,
  Chow Loong Jin <hyperair@debian.org>,
+ Alex Myczko <tar@debian.org>,
 Build-Depends:
  debhelper-compat (= 13),
  cmake,

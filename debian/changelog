@@ -1,10 +1,10 @@
-hyprtoolkit (0.5.4-1) UNRELEASED; urgency=medium
+hyprtoolkit (0.5.4-1) unstable; urgency=medium
 
   * New upstream version 0.5.4
   * drop upstreamed patch
   * d/control: append Uploaders
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sat, 09 May 2026 19:55:10 +0200
+ -- Carl Keinath <carl.keinath@gmail.com>  Tue, 12 May 2026 16:05:04 +0800
 
 hyprtoolkit (0.5.3-2) unstable; urgency=medium
 

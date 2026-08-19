@@ -1,0 +1,48 @@
+name: Sync from Debian Salsa
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs daily at midnight.
+  workflow_dispatch: # Allows you to run it manually
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout My Repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.MY_GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch and Merge from Salsa
+        run: |
+          git remote add upstream https://salsa.debian.org/hyprland-team/hyprtoolkit.git
+          git fetch upstream
+          
+          # 1. Start the merge but don't commit it yet
+          # This allows us to fix conflicts in the script
+          git merge upstream/upstream/latest --allow-unrelated-histories --no-commit --no-ff || true
+
+          # 2. Resolve README conflict: Keep YOUR version
+          # 'HEAD' refers to your repo's version
+          git checkout --ours README.md
+          
+          # 3. Resolve LICENSE conflict: Usually best to keep yours or combine them
+          # Using --ours keeps your existing license
+          git checkout --ours LICENSE
+          
+          # 4. Add all other changes from Salsa (the code)
+          git add .
+
+          # 5. Finalize the merge commit
+          git commit -m "Sync from Salsa: Merged upstream code and preserved local README/LICENSE"
+
+      - name: Push to GitHub
+        run: |
+          git push origin main

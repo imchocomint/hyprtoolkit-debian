@@ -1,0 +1,10 @@
+prefix=/usr
+includedir=/usr/include
+libdir=/usr/lib/x86_64-linux-gnu
+
+Name: hyprtoolkit
+URL: https://github.com/hyprwm/hyprtoolkit
+Description: A modern C++ Wayland-native GUI toolkit
+Version: 0.5.4
+Cflags: -I${includedir}
+Libs: -L${libdir} -lhyprtoolkit

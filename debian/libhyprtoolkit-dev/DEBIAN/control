@@ -1,0 +1,22 @@
+Package: libhyprtoolkit-dev
+Source: hyprtoolkit
+Version: 0.5.4-1
+Architecture: amd64
+Maintainer: Debian Hyprland Maintainers <team+hyprland@tracker.debian.org>
+Installed-Size: 100
+Depends: libaquamarine-dev (>= 0.10.0), libhyprgraphics-dev (>= 0.5.0), libhyprtoolkit (= 0.5.4-1), libhyprutils-dev (>= 0.11.0)
+Section: libdevel
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/hyprwm/hyprtoolkit
+Description: Modern, wayland-native C++ GUI toolkit -- development files
+ Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
+ making wayland GUI apps, with a few goals:
+ .
+  - Simple C++ API for making a GUI app
+  - Smooth animations
+  - Easy usage
+  - Simple system theming
+ .
+ This package contains the headers and other development support files needed
+ for compiling and linking applications and libraries which use this library.

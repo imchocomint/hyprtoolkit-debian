@@ -1,0 +1,22 @@
+Package: libhyprtoolkit
+Source: hyprtoolkit
+Version: 0.5.4-1
+Architecture: amd64
+Maintainer: Debian Hyprland Maintainers <team+hyprland@tracker.debian.org>
+Installed-Size: 1726
+Depends: aquamarine (>= 0.14.0), libc6 (>= 2.43), libcairo2 (>= 1.2.4), libdrm2 (>= 2.4.116), libegl1, libgbm1 (>= 7.11~1), libgcc-s1 (>= 13), libgles2, libglib2.0-0t64 (>= 2.12.0), libhyprgraphics (>= 0.5.1), libhyprutils (>= 0.14.1), libiniparser4 (>= 4.0), libpango-1.0-0 (>= 1.20.0), libpangocairo-1.0-0 (>= 1.14.0), libpixman-1-0 (>= 0.11.2), libstdc++6 (>= 16.2.0-1), libwayland-client0 (>= 1.20.0), libxkbcommon0 (>= 0.5.0)
+Section: libs
+Priority: optional
+Multi-Arch: same
+Homepage: https://github.com/hyprwm/hyprtoolkit
+Description: Modern, wayland-native C++ GUI toolkit -- binary files
+ Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
+ making wayland GUI apps, with a few goals:
+ .
+  - Simple C++ API for making a GUI app
+  - Smooth animations
+  - Easy usage
+  - Simple system theming
+ .
+ This package contains the shared library needed for running applications which
+ use this library.

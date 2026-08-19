@@ -1,0 +1,3 @@
+debian/tmp/usr/include/hyprtoolkit
+debian/tmp/usr/lib/x86_64-linux-gnu/libhyprtoolkit.so
+debian/tmp/usr/lib/x86_64-linux-gnu/pkgconfig/hyprtoolkit.pc

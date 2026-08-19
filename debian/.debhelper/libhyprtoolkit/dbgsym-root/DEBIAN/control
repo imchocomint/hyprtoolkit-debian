@@ -1,0 +1,13 @@
+Package: libhyprtoolkit-dbgsym
+Source: hyprtoolkit
+Version: 0.5.4-1
+Auto-Built-Package: debug-symbols
+Architecture: amd64
+Maintainer: Debian Hyprland Maintainers <team+hyprland@tracker.debian.org>
+Installed-Size: 12387
+Depends: libhyprtoolkit (= 0.5.4-1)
+Section: debug
+Priority: optional
+Multi-Arch: same
+Description: debug symbols for libhyprtoolkit
+Build-Ids: 59dda8cd4e605a1cec3646ecf7584141bddb4841

@@ -1,7 +1,7 @@
-# hyprwire-debian
-Mirror of https://salsa.debian.org/hyprland-team/hyprwire
+# hyprtoolkit-debian
+Mirror of https://salsa.debian.org/hyprland-team/hyprtoolkit
 
-Used for hyprplus when hyprwire is not available in the repo. Packages to six .deb files.
+Used for hyprplus (since PikaOS does not package this anymore)
 
 ## Build
 `gbp buildpackage -us -uc --git-ignore-new` inside cloned directory.

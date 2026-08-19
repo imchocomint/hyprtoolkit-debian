@@ -1,0 +1,71 @@
+#include "Null.hpp"
+
+#include "../../layout/Positioner.hpp"
+#include "../../renderer/Renderer.hpp"
+#include "../../window/ToolkitWindow.hpp"
+#include "../../core/AnimationManager.hpp"
+#include "../Element.hpp"
+
+using namespace Hyprtoolkit;
+
+SP<CNullElement> CNullElement::create(const SNullData& data) {
+    auto p          = SP<CNullElement>(new CNullElement(data));
+    p->impl->self   = p;
+    p->m_impl->self = p;
+    return p;
+}
+
+CNullElement::CNullElement(const SNullData& data) : IElement(), m_impl(makeUnique<SNullImpl>()) {
+    m_impl->data = data;
+}
+
+void CNullElement::paint() {
+    ;
+}
+
+void CNullElement::reposition(const Hyprutils::Math::CBox& box, const Hyprutils::Math::Vector2D& maxSize) {
+    IElement::reposition(box);
+
+    g_positioner->positionChildren(impl->self.lock());
+}
+
+SP<CNullBuilder> CNullElement::rebuild() {
+    auto p       = SP<CNullBuilder>(new CNullBuilder());
+    p->m_self    = p;
+    p->m_data    = makeUnique<SNullData>(m_impl->data);
+    p->m_element = m_impl->self;
+    return p;
+}
+
+void CNullElement::replaceData(const SNullData& data) {
+    m_impl->data = data;
+
+    if (impl->window)
+        impl->window->scheduleReposition(impl->self);
+}
+
+Hyprutils::Math::Vector2D CNullElement::size() {
+    return impl->position.size();
+}
+
+std::optional<Vector2D> CNullElement::preferredSize(const Hyprutils::Math::Vector2D& parent) {
+    return impl->getPreferredSizeGeneric(m_impl->data.size, parent);
+}
+
+std::optional<Vector2D> CNullElement::minimumSize(const Hyprutils::Math::Vector2D& parent) {
+    auto s = m_impl->data.size.calculate(parent);
+    if (s.x != -1 && s.y != -1)
+        return s;
+    return Vector2D{0, 0};
+}
+
+std::optional<Vector2D> CNullElement::maximumSize(const Hyprutils::Math::Vector2D& parent) {
+    auto s = m_impl->data.size.calculate(parent);
+    if (s.x != -1 && s.y != -1)
+        return s;
+    return std::nullopt;
+}
+
+bool CNullElement::positioningDependsOnChild() {
+    return m_impl->data.size.hasAuto();
+}

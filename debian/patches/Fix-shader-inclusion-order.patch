@@ -1,0 +1,28 @@
+From: Chow Loong Jin <hyperair@debian.org>
+Date: Thu, 20 Nov 2025 14:53:37 +0800
+Subject: Fix shader inclusion order
+
+Sort the shader files when generating Shaders.hpp. This makes `reprotest
+--variations=+fileordering` happy.
+
+Origin: Debian
+Forwarded: no
+Author: Chow Loong Jin <hyperair@debian.org>
+---
+ scripts/generateShaderIncludes.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/generateShaderIncludes.sh b/scripts/generateShaderIncludes.sh
+index 58594c9..770cd06 100755
+--- a/scripts/generateShaderIncludes.sh
++++ b/scripts/generateShaderIncludes.sh
+@@ -12,7 +12,8 @@ echo '#pragma once' > ./src/renderer/gl/shaders/Shaders.hpp
+ echo '#include <map>' >> ./src/renderer/gl/shaders/Shaders.hpp
+ echo 'static const std::map<std::string, std::string> SHADERS = {' >> ./src/renderer/gl/shaders/Shaders.hpp
+ 
+-for filename in `ls ${SHADERS_SRC}`; do
++find "$SHADERS_SRC" -maxdepth 1 -type f | sort -fdi | while read -r filepath; do
++	filename=${filepath#"${SHADERS_SRC}"/}
+ 	echo "--	${filename}"
+ 	
+ 	{ echo 'R"#('; cat ${SHADERS_SRC}/${filename}; echo ')#"'; } > ./src/renderer/gl/shaders/${filename}.inc

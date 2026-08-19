@@ -1,0 +1,72 @@
+Source: hyprtoolkit
+Section: libs
+Maintainer: Debian Hyprland Maintainers <team+hyprland@tracker.debian.org>
+Uploaders:
+ Carl Keinath <carl.keinath@gmail.com>,
+ Chow Loong Jin <hyperair@debian.org>,
+ Alex Myczko <tar@debian.org>,
+Build-Depends:
+ debhelper-compat (= 13),
+ cmake,
+ hyprwayland-scanner (>= 0.4.0),
+ libaquamarine-dev (>= 0.10.0),
+ libcairo2-dev,
+ libdrm-dev,
+ libegl-dev,
+ libgbm-dev,
+ libgles-dev,
+ libgtest-dev,
+ libhyprgraphics-dev (>= 0.5.0),
+ libhyprlang-dev (>= 0.6.0),
+ libhyprutils-dev (>= 0.11.0),
+ libiniparser-dev,
+ libpango1.0-dev,
+ libpixman-1-dev,
+ libwayland-dev,
+ libxkbcommon-dev,
+ pkgconf,
+ wayland-protocols,
+Standards-Version: 4.7.4
+Homepage: https://github.com/hyprwm/hyprtoolkit
+Vcs-Browser: https://salsa.debian.org/hyprland-team/hyprtoolkit
+Vcs-Git: https://salsa.debian.org/hyprland-team/hyprtoolkit.git
+
+Package: libhyprtoolkit-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends:
+ libaquamarine-dev (>= 0.10.0),
+ libhyprgraphics-dev (>= 0.5.0),
+ libhyprtoolkit5 (= ${binary:Version}),
+ libhyprutils-dev (>= 0.11.0),
+ ${misc:Depends},
+Description: Modern, wayland-native C++ GUI toolkit -- development files
+ Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
+ making wayland GUI apps, with a few goals:
+ .
+  - Simple C++ API for making a GUI app
+  - Smooth animations
+  - Easy usage
+  - Simple system theming
+ .
+ This package contains the headers and other development support files needed
+ for compiling and linking applications and libraries which use this library.
+
+Package: libhyprtoolkit5
+Architecture: any
+Multi-Arch: same
+Depends:
+ ${misc:Depends},
+ ${shlibs:Depends},
+Description: Modern, wayland-native C++ GUI toolkit -- binary files
+ Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
+ making wayland GUI apps, with a few goals:
+ .
+  - Simple C++ API for making a GUI app
+  - Smooth animations
+  - Easy usage
+  - Simple system theming
+ .
+ This package contains the shared library needed for running applications which
+ use this library.

@@ -1,0 +1,58 @@
+hyprtoolkit (0.5.4-1) unstable; urgency=medium
+
+  * New upstream version 0.5.4
+  * drop upstreamed patch
+  * d/control: append Uploaders
+
+ -- Carl Keinath <carl.keinath@gmail.com>  Tue, 12 May 2026 16:05:04 +0800
+
+hyprtoolkit (0.5.3-2) unstable; urgency=medium
+
+  * fix FTBFS with gcc-16 (Closes: #1133502)
+  * d/control: bump S-V to 4.7.4, remove Priority: optional
+
+ -- Carl Keinath <carl.keinath@gmail.com>  Thu, 16 Apr 2026 11:50:43 +0800
+
+hyprtoolkit (0.5.3-1) unstable; urgency=medium
+
+  * New upstream version 0.5.3
+
+ -- Chow Loong Jin <hyperair@debian.org>  Mon, 26 Jan 2026 14:08:08 +0900
+
+hyprtoolkit (0.5.2-1) unstable; urgency=medium
+
+  * New upstream version 0.5.2
+
+ -- Chow Loong Jin <hyperair@debian.org>  Tue, 06 Jan 2026 11:50:39 +0800
+
+hyprtoolkit (0.5.1-1) unstable; urgency=medium
+
+  * New upstream version 0.5.1
+  * refresh patches
+  * d/control:
+    - set min required hyprutils to >= 0.11.0
+    - bump SOVERSION to 5
+    - set min required hyprgraphics to >= 0.5.0
+  * bump Standards-Version to 4.7.3
+
+ -- Carl Keinath <carl.keinath@gmail.com>  Sat, 03 Jan 2026 09:21:53 +0100
+
+hyprtoolkit (0.4.1-1) unstable; urgency=medium
+
+  * New upstream version 0.4.1
+
+ -- Carl Keinath <carl.keinath@gmail.com>  Sun, 21 Dec 2025 15:44:25 +0100
+
+hyprtoolkit (0.4.0-1) unstable; urgency=medium
+
+  * New upstream version 0.4.0
+  * refresh patches
+  * d/control: bump SOVERSION to 4
+
+ -- Carl Keinath <carl.keinath@gmail.com>  Mon, 01 Dec 2025 09:05:54 +0100
+
+hyprtoolkit (0.3.0-1) unstable; urgency=medium
+
+  * Initial release. (Closes: #1118668)
+
+ -- Carl Keinath <carl.keinath@gmail.com>  Sat, 15 Nov 2025 19:08:29 +0100

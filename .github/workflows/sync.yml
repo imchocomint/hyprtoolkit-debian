@@ -29,7 +29,7 @@ jobs:
           
           # 1. Start the merge but don't commit it yet
           # This allows us to fix conflicts in the script
-          git merge upstream/upstream/latest --allow-unrelated-histories --no-commit --no-ff || true
+          git merge upstream/debian/latest --allow-unrelated-histories --no-commit --no-ff || true
 
           # 2. Resolve README conflict: Keep YOUR version
           # 'HEAD' refers to your repo's version

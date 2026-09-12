@@ -6,8 +6,9 @@ hyprtoolkit (0.6.0-1) UNRELEASED; urgency=medium
   * d/control: add abseil to Build-Depends
   * rename binary for SONAME bump
   * enable autopkgtest for upstreams tests
+  * wrap and sort debian dir
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 11:34:48 +0200
+ -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 11:36:00 +0200
 
 hyprtoolkit (0.5.4-1) unstable; urgency=medium
 

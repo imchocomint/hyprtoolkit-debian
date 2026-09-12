@@ -9,7 +9,7 @@ Origin: Debian
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c0a4702..56c2f8b 100644
+index c0fa337..39f5d55 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -19,7 +19,7 @@ set(INCLUDE ${CMAKE_INSTALL_FULL_INCLUDEDIR})
@@ -19,18 +19,18 @@ index c0a4702..56c2f8b 100644
 -find_package(OpenGL REQUIRED COMPONENTS "GLES3")
 +find_package(OpenGL REQUIRED COMPONENTS EGL GLES3)
  find_package(hyprwayland-scanner 0.4.0 REQUIRED)
- pkg_check_modules(
-   deps
-@@ -73,7 +73,7 @@ target_include_directories(
+ 
+ set(AQUAMARINE_MINIMUM_VERSION 0.10.0)
+@@ -84,7 +84,7 @@ target_include_directories(
    PRIVATE "./src" "./src/include" "./protocols" "${CMAKE_BINARY_DIR}")
  set_target_properties(hyprtoolkit PROPERTIES VERSION ${HYPRTOOLKIT_VERSION}
-                                              SOVERSION 5)
+                                               SOVERSION 6)
 -target_link_libraries(hyprtoolkit PUBLIC OpenGL::EGL OpenGL::OpenGL
 +target_link_libraries(hyprtoolkit PUBLIC OpenGL::EGL OpenGL::GLES3
                                           PkgConfig::deps)
  
- check_include_file("sys/timerfd.h" HAS_TIMERFD)
-@@ -172,7 +172,7 @@ if(BUILD_TESTING)
+ check_include_file("sys/inotify.h" HAS_INOTIFY)
+@@ -203,7 +203,7 @@ if(BUILD_TESTING)
      PRIVATE "./src" "./src/include" "./protocols" "${CMAKE_BINARY_DIR}")
    target_link_libraries(
      hyprtoolkit_tests PRIVATE hyprtoolkit GTest::gtest_main OpenGL::EGL

@@ -1,6 +1,7 @@
 hyprtoolkit (0.6.0-1) UNRELEASED; urgency=medium
 
   * New upstream version 0.6.0
+  * d/patches: refresh fix-opengl-linking patch
 
  -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 09:20:10 +0200
 

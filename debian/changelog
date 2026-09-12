@@ -5,8 +5,9 @@ hyprtoolkit (0.6.0-1) UNRELEASED; urgency=medium
   * d/control: set min-required version for hyprutils to 0.14.2
   * d/control: add abseil to Build-Depends
   * rename binary for SONAME bump
+  * enable autopkgtest for upstreams tests
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 10:22:38 +0200
+ -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 11:34:48 +0200
 
 hyprtoolkit (0.5.4-1) unstable; urgency=medium
 

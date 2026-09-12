@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+mkdir -p "$AUTOPKGTEST_TMP"
+# only embeddedRenderer can be run against public abi
+cp tests/EmbeddedRenderer.cpp "$AUTOPKGTEST_TMP"/EmbeddedRenderer.cpp
+cp debian/tests/CMakeLists.txt "$AUTOPKGTEST_TMP"/CMakeLists.txt
+
+mkdir -p "$AUTOPKGTEST_TMP"/build
+cd "$AUTOPKGTEST_TMP"/build
+
+cmake ..
+cmake --build .
+ctest --output-on-failure

@@ -1,0 +1,8 @@
+Tests:
+ upstream-tests,
+Depends:
+  libgtest-dev,
+  @,
+  @builddeps@,
+Restrictions:
+ allow-stderr,

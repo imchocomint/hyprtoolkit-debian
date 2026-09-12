@@ -7,8 +7,9 @@ hyprtoolkit (0.6.0-1) UNRELEASED; urgency=medium
   * rename binary for SONAME bump
   * enable autopkgtest for upstreams tests
   * wrap and sort debian dir
+  * migrate to dh-compat 14
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 11:36:00 +0200
+ -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 11:36:42 +0200
 
 hyprtoolkit (0.5.4-1) unstable; urgency=medium
 

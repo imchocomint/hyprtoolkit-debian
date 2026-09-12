@@ -6,7 +6,7 @@ Uploaders:
  Chow Loong Jin <hyperair@debian.org>,
  Alex Myczko <tar@debian.org>,
 Build-Depends:
- debhelper-compat (= 13),
+ debhelper-compat (= 14),
  cmake,
  hyprwayland-scanner (>= 0.4.0),
  libabsl-dev,
@@ -41,7 +41,6 @@ Depends:
  libhyprgraphics-dev (>= 0.5.0),
  libhyprtoolkit6 (= ${binary:Version}),
  libhyprutils-dev (>= 0.14.2),
- ${misc:Depends},
 Description: Modern, wayland-native C++ GUI toolkit -- development files
  Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
  making wayland GUI apps, with a few goals:
@@ -57,9 +56,6 @@ Description: Modern, wayland-native C++ GUI toolkit -- development files
 Package: libhyprtoolkit6
 Architecture: any
 Multi-Arch: same
-Depends:
- ${misc:Depends},
- ${shlibs:Depends},
 Description: Modern, wayland-native C++ GUI toolkit -- binary files
  Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
  making wayland GUI apps, with a few goals:

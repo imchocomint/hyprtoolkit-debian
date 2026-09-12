@@ -3,8 +3,9 @@ hyprtoolkit (0.6.0-1) UNRELEASED; urgency=medium
   * New upstream version 0.6.0
   * d/patches: refresh fix-opengl-linking patch
   * d/control: set min-required version for hyprutils to 0.14.2
+  * d/control: add abseil to Build-Depends
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 10:18:15 +0200
+ -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 10:21:53 +0200
 
 hyprtoolkit (0.5.4-1) unstable; urgency=medium
 

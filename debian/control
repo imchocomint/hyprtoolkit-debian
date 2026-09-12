@@ -22,6 +22,7 @@ Build-Depends:
  libiniparser-dev,
  libpango1.0-dev,
  libpixman-1-dev,
+ libabsl-dev,
  libwayland-dev,
  libxkbcommon-dev,
  pkgconf,

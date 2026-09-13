@@ -3,6 +3,7 @@
 #include "Element.hpp"
 #include "../types/SizeType.hpp"
 #include "../palette/Color.hpp"
+#include "../palette/Gradient.hpp"
 
 #include <hyprutils/memory/UniquePtr.hpp>
 
@@ -19,6 +20,7 @@ namespace Hyprtoolkit {
         static Hyprutils::Memory::CSharedPointer<CRectangleBuilder> begin();
         Hyprutils::Memory::CSharedPointer<CRectangleBuilder>        color(colorFn&&);
         Hyprutils::Memory::CSharedPointer<CRectangleBuilder>        borderColor(colorFn&&);
+        Hyprutils::Memory::CSharedPointer<CRectangleBuilder>        borderGradient(gradientFn&&);
         Hyprutils::Memory::CSharedPointer<CRectangleBuilder>        rounding(int);
         Hyprutils::Memory::CSharedPointer<CRectangleBuilder>        borderThickness(int);
         Hyprutils::Memory::CSharedPointer<CRectangleBuilder>        size(CDynamicSize&&);
@@ -41,6 +43,8 @@ namespace Hyprtoolkit {
 
         Hyprutils::Memory::CSharedPointer<CRectangleBuilder> rebuild();
         virtual Hyprutils::Math::Vector2D                    size();
+        void                                                 animateColor(const SAnimation& animation);
+        void                                                 animateBorderColor(const SAnimation& animation);
 
       private:
         static Hyprutils::Memory::CSharedPointer<CRectangleElement> create(const SRectangleData& data);

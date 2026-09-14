@@ -1,4 +1,4 @@
-hyprtoolkit (0.6.0-1) UNRELEASED; urgency=medium
+hyprtoolkit (0.6.0-1) experimental; urgency=medium
 
   * New upstream version 0.6.0
   * d/patches: refresh fix-opengl-linking patch
@@ -9,7 +9,7 @@ hyprtoolkit (0.6.0-1) UNRELEASED; urgency=medium
   * wrap and sort debian dir
   * migrate to dh-compat 14
 
- -- Carl Keinath <carl.keinath@gmail.com>  Sat, 12 Sep 2026 11:36:42 +0200
+ -- Carl Keinath <carl.keinath@gmail.com>  Tue, 15 Sep 2026 01:15:54 +0800
 
 hyprtoolkit (0.5.4-1) unstable; urgency=medium
 

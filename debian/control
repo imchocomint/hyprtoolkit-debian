@@ -37,10 +37,22 @@ Section: libdevel
 Architecture: any
 Multi-Arch: same
 Depends:
+ libabsl-dev,
  libaquamarine-dev (>= 0.10.0),
+ libcairo2-dev,
+ libdrm-dev,
+ libegl-dev,
+ libgbm-dev,
  libhyprgraphics-dev (>= 0.5.0),
+ libhyprlang-dev (>= 0.6.0),
  libhyprtoolkit6 (= ${binary:Version}),
  libhyprutils-dev (>= 0.14.2),
+ libiniparser-dev,
+ libpango1.0-dev,
+ libpixman-1-dev,
+ libwayland-dev,
+ libxkbcommon-dev,
+ wayland-protocols,
 Description: Modern, wayland-native C++ GUI toolkit -- development files
  Hyprtoolkit is designed to be a small, simple, and modern C++ toolkit for
  making wayland GUI apps, with a few goals:

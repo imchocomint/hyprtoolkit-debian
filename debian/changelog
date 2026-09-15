@@ -1,3 +1,9 @@
+hyprtoolkit (0.6.0-2) experimental; urgency=medium
+
+  * Update libhyprtoolkit-dev to include hyprtoolkit.pc requires
+
+ -- Chow Loong Jin <hyperair@debian.org>  Tue, 15 Sep 2026 11:50:33 +0800
+
 hyprtoolkit (0.6.0-1) experimental; urgency=medium
 
   * New upstream version 0.6.0

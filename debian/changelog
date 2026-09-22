@@ -1,3 +1,9 @@
+hyprtoolkit (0.6.0-3) unstable; urgency=medium
+
+  * Reupload to unstable
+
+ -- Chow Loong Jin <hyperair@debian.org>  Mon, 21 Sep 2026 11:58:23 +0800
+
 hyprtoolkit (0.6.0-2) experimental; urgency=medium
 
   * Update libhyprtoolkit-dev to include hyprtoolkit.pc requires
